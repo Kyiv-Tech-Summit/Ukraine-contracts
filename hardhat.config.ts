@@ -16,6 +16,7 @@ require('dotenv').config();
 
 let { 
     ETHERSCAN_TOKEN,
+    BSCSCAN_TOKEN,
     PRIVATE_KEY
 } = process.env;
 
@@ -47,8 +48,14 @@ if(PRIVATE_KEY) {
             accounts
         },
         goerli: {
-            url: "https://eth-goerli.alchemyapi.io/v2/v92DVe9FFvr2lzRB4wjtk-z4DdsQjBhs",
-            gasPrice: 20000000000,
+            url: "https://goerli.infura.io/v3/f64230346f3e45058e09e5d5e6912e5c",
+            // gasPrice: 20000000000,
+            accounts
+        },
+        bscTestnet: {
+            url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+            chainId: 97,
+            gasPrice: 10000000000,
             accounts
         },
     };
@@ -67,6 +74,7 @@ module.exports = {
             rinkeby:ETHERSCAN_TOKEN,
             ropsten:ETHERSCAN_TOKEN,
             kovan:ETHERSCAN_TOKEN,
+            bscTestnet:BSCSCAN_TOKEN,
             goerli:ETHERSCAN_TOKEN
         }
     },

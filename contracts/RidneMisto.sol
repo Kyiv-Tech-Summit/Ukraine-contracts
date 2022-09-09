@@ -1,17 +1,22 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract RidneMisto is ERC1155, Ownable, Pausable {
+contract RidneMisto is
+    ERC1155Upgradeable,
+    OwnableUpgradeable,
+    PausableUpgradeable
+{
     string public name;
     string public symbol;
-    uint256 mintPrice;
+    uint256 public mintPrice;
 
-    uint256 maxTokenId;
+    uint256 public maxTokenId;
     mapping(uint256 => string) tokenIdtoMetadata;
 
     mapping(address => bool) public isWhitelistedFund;
@@ -22,23 +27,25 @@ contract RidneMisto is ERC1155, Ownable, Pausable {
     mapping(address => uint256) public raisedByAddress;
     mapping(address => uint256) public raisedForFund;
 
-    event FundsAdded(address[] funds);
-    event FundRemoved(address fund, string reason);
+    event FundsAdded(address[] indexed funds);
+    event FundRemoved(address indexed fund, string reason);
+
+    event TokenAdded(uint256 tokenId, string ipfs);
 
     //name and symbol unneeded?
-    constructor(
+    function initialize(
         string memory _name,
         string memory _symbol,
         uint256 _mintPrice,
         string[] memory _tokenMetadata,
         address[] memory funds
-    ) ERC1155("") {
+    ) public initializer {
         name = _name;
         symbol = _symbol;
         mintPrice = _mintPrice;
+        __Ownable_init();
         addNewTokens(_tokenMetadata);
         addFundraisers(funds);
-        _pause();
     }
 
     modifier isValidMint(uint256 token, address fund) {
@@ -80,6 +87,7 @@ contract RidneMisto is ERC1155, Ownable, Pausable {
         public
         onlyOwner
     {
+        require(cityId <= maxTokenId, "Non-existant cityId");
         for (uint256 i = 0; i < funds.length; ) {
             isWhitelistedLocalFund[cityId][funds[i]] = true;
             unchecked {
@@ -106,10 +114,11 @@ contract RidneMisto is ERC1155, Ownable, Pausable {
 
     function addNewTokens(string[] memory _tokenMetadata) public onlyOwner {
         for (uint256 i = 0; i < _tokenMetadata.length; ) {
-            tokenIdtoMetadata[maxTokenId + 1] = _tokenMetadata[i];
+            maxTokenId++;
+            emit TokenAdded(maxTokenId, _tokenMetadata[i]);
+            tokenIdtoMetadata[maxTokenId] = _tokenMetadata[i];
             unchecked {
                 i++;
-                maxTokenId++;
             }
         }
     }

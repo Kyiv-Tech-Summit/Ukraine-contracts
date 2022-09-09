@@ -9,13 +9,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const metadata = []
-  const funds = []
+  //PLACEHOLDERS
+  const metadata = ["ipfs://Qmc1UF28WCMTp2g33v59dgQrrhN6RmqVY8dBNLBAYEbP5z/1.json", "ipfs://Qmc1UF28WCMTp2g33v59dgQrrhN6RmqVY8dBNLBAYEbP5z/2.json"]
+  const funds = ["0x62F650c0eE84E3a1998A2EEe042a12D9E9728843", "0x22f60E6BD7973c226979B6F57BC92C2d66a8c151", "0xf673BFf185bcbA7c97Ed33f66afC46cB31bC301D"]
 
+  //name,sumbol,mint price, initial tokens and unrestricted funds
   const constructor = [
-    'name', 
+    'name',
     'symbol',
-    1000000000000000,
+    "20000000000000000",
     metadata,
     funds
   ]
